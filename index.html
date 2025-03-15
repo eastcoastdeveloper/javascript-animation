@@ -1,0 +1,145 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+	margin: 0;
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background: linear-gradient(135deg, #1e1e1e, #343434, #1e1e1e);
+	background-size: 400% 400%;
+	animation: gradientAnimation 15s ease infinite;
+	position: relative;
+	overflow: hidden;
+}
+
+@keyframes gradientAnimation {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+/* Add a textured overlay */
+body::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: radial-gradient(
+			circle at 50% 50%,
+			rgba(255, 255, 255, 0.1),
+			rgba(0, 0, 0, 0.1)
+		),
+		radial-gradient(
+			circle at 50% 50%,
+			rgba(255, 255, 255, 0.1),
+			rgba(0, 0, 0, 0.1)
+		);
+	background-size: 10px 10px;
+	opacity: 0.5;
+	z-index: -1;
+}
+
+</style>
+
+<body>
+	<canvas id="particleCanvas"></canvas>
+
+	<script>
+const canvas = document.getElementById('particleCanvas');
+const ctx = canvas.getContext('2d');
+
+// Set canvas dimensions
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+// Particle class
+class Particle {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.size = Math.random() * 3 + 1;
+    this.speedX = Math.random() * 3 - 1.5;
+    this.speedY = Math.random() * 3 - 1.5;
+    this.color = this.getRandomColor();
+  }
+
+  getRandomColor() {
+    const colors = ['#0080ff', '#007acc', '#f7df1e', '#1e1e1e'];
+    return colors[Math.floor(Math.random() * colors.length)];
+  }
+
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+
+    // Reset particle if it goes off screen
+    if (this.x > canvas.width || this.x < 0) {
+      this.x = Math.random() * canvas.width;
+    }
+    if (this.y > canvas.height || this.y < 0) {
+      this.y = Math.random() * canvas.height;
+    }
+  }
+
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fillStyle = this.color;
+    ctx.fill();
+  }
+}
+
+// Array to hold particles
+const particlesArray = [];
+
+// Function to create particles
+function createParticles() {
+  for (let i = 0; i < 100; i++) {
+    const x = Math.random() * canvas.width;
+    const y = Math.random() * canvas.height;
+    particlesArray.push(new Particle(x, y));
+  }
+}
+
+// Function to handle animation
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  for (let i = 0; i < particlesArray.length; i++) {
+    particlesArray[i].update();
+    particlesArray[i].draw();
+  }
+
+  requestAnimationFrame(animate);
+}
+
+// Event listeners for resizing the canvas
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  particlesArray.length = 0;
+  createParticles();
+});
+
+// Initialize particles and start animation
+createParticles();
+animate();
+
+
+// Start text animation
+animateText();
+	</script>
+</body>
+</html>
